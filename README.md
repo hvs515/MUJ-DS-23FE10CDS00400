@@ -168,6 +168,18 @@ python src/predict.py --text "..." --threshold 0.6 --model-dir models
 }
 ```
 
+#### LLM second opinion (Google Gemini):
+Compare the ML ensemble with an LLM classification. Create a `.env` file in the project root containing your Gemini API key:
+```
+GEM_API=your-gemini-api-key
+```
+Then add `--llm` to any prediction, or run the LLM on its own:
+```bash
+python src/predict.py --llm --text "Your article text here"
+python src/llm_predict.py --file path/to/article.txt
+```
+The result gains an `"llm"` field with Gemini's `prediction`, `confidence` and `explanation`. If a Gemini model is overloaded, the next model in `MODELS` (see `src/llm_predict.py`) is tried.
+
 #### Programmatic usage:
 ```python
 from src.predict import BiasPredictor

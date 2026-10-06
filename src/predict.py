@@ -124,6 +124,9 @@ def main():
     parser.add_argument('--model-dir', type=str, default='models',
                        help='Path to models directory (default: models)')
     
+    parser.add_argument('--llm', action='store_true',
+                       help='Also classify with Gemini (needs GEM_API in .env)')
+    
     args = parser.parse_args()
     
     # Initialize predictor
@@ -140,6 +143,16 @@ def main():
         print(f"Reading from file: {args.file}")
         print()
         result = predictor.predict_from_file(args.file, confidence_threshold=args.threshold)
+    
+    # Optional LLM second opinion
+    if args.llm:
+        from llm_predict import predict_with_llm
+        if args.file:
+            with open(args.file, 'r', encoding='utf-8') as f:
+                text = f.read()
+        else:
+            text = args.text
+        result["llm"] = predict_with_llm(text)
     
     # Pretty print result
     print("="*60)
